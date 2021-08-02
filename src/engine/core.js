@@ -112,12 +112,49 @@ function cleanMap() {
     }
 }
 
-function getRoute(c, from = null, fromCum = 0, level = 0) {    
+function getRoute(startCell, lax = 1) {
+    const stock = [];
+    let stockPointer = 1;
+    stock[stockPointer] = {
+        c: startCell,
+        from: null,
+        fromCum: 0,
+        level: 0,
+    };
+    let maxLevel = 0;
+    while (stockPointer) {
+        const { c, from, fromCum, level } = stock[stockPointer];
+        //delete stock[stockPointer];
+        stockPointer--;
+        if (c.shortestSpLinkDist <= fromCum + lax) continue;
+        c.shortestSpLinkDist = fromCum;
+        c.shortestSpLink = from;
+        const toLevel = level + 1;
+        const toCum = fromCum + c.getPathWeight();
+        c.spLinks.forEach(lnk => {
+            stock[++stockPointer] = {
+                c: lnk,
+                from: c,
+                fromCum: toCum,
+                level: toLevel,
+            }
+        });
+        if (stockPointer > maxLevel) {
+            maxLevel = stockPointer;
+            //console.log(`new max level ${stockPointer} call level ${toLevel}`);
+        }
+    }
+    console.log(`new max level ${maxLevel} `);
+    
+}
+
+
+function getRouteOverflowed(c, from = null, fromCum = 0, level = 0) {
     if (c.shortestSpLinkDist <= fromCum) return;
     c.shortestSpLinkDist = fromCum;
     c.shortestSpLink = from;
     const toLevel = level + 1;
-    const toCum = fromCum + c.getPathWeight();    
+    const toCum = fromCum + c.getPathWeight();
     c.spLinks.forEach(lnk => getRoute(lnk, c, toCum, toLevel));    
 }
 

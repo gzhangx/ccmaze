@@ -31,7 +31,7 @@ function runLoop(thisRender) {
         ml.forEach(c => {
             //console.log(`rect at ${ml.x} ${ml.y}`);
             //console.log(ml)            
-            if (!c.isFreeSpace)
+            if (c.cellType !== ' ')
                 drect(c);
             else {
                 if (c.shortestSpLinkDist < 9999) {
