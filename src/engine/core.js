@@ -1,4 +1,4 @@
-import get from 'lodash/get';
+import { get, orderBy} from 'lodash';
 
 const debugfile = `
  __________________________________________________________________
@@ -24,7 +24,7 @@ const debugfile = `
 
 function getPathWeight(c) {
     if (c === ' ') return 1;
-    return 100;
+    return 10000;
 }
 function parseFile(file) {    
     const parsed = file.split('\n').reduce((acc, l) => {
@@ -105,47 +105,64 @@ function cleanMap() {
         map: core.origMap.map.map(r => {
             return r.map(c => {
                 c.shortestSpLink = null;
-                c.shortestSpLinkDist = MAXWEIGHT;
+                c.shortestSpLinkDist = MAXWEIGHT;            
                 return c;
             })
         })
     }
 }
 
-function getRoute(startCell, lax = 1) {
-    const stock = [];
-    let stockPointer = 1;
-    stock[stockPointer] = {
-        c: startCell,
+function initSearchStart(x, y) {
+    const ret = {
+        stock: [],
+        processAmount: -1,
+        curDbgItems: [],
+    };
+    ret.stock.push({
+        c: core.getMapAt(x, y),
         from: null,
         fromCum: 0,
         level: 0,
-    };
-    let maxLevel = 0;
-    while (stockPointer) {
-        const { c, from, fromCum, level } = stock[stockPointer];
-        //delete stock[stockPointer];
-        stockPointer--;
-        if (c.shortestSpLinkDist <= fromCum + lax) continue;
+    });
+    return ret;
+}
+function getRoute(opt) {
+    let pcAmount = opt.processAmount || 1;
+        
+    let withoutSort = opt.withoutSort || 100;
+    while (opt.stock.length) {
+        //console.log(stock[0].fromCum + " " + stock[stock.length - 1].fromCum)
+        const { c, from, fromCum, level } = opt.stock.pop();        
+        if (c.shortestSpLinkDist < fromCum) continue;
+        //opt.curDbgItems.push(c);
         c.shortestSpLinkDist = fromCum;
         c.shortestSpLink = from;
         const toLevel = level + 1;
         const toCum = fromCum + c.getPathWeight();
         c.spLinks.forEach(lnk => {
-            stock[++stockPointer] = {
-                c: lnk,
-                from: c,
-                fromCum: toCum,
-                level: toLevel,
+            if (lnk.shortestSpLinkDist > toCum) {
+                //lnk.shortestSpLinkDist = toCum;
+                //lnk.shortestSpLink = c;
+                //lnk.processed = false;
+                //console.log(`pushing ${lnk.x} ${lnk.y} ${lnk.shortestSpLinkDist} ${toCum}`);
+                opt.stock.push({
+                    c: lnk,
+                    from: c,
+                    fromCum: toCum,
+                    level: toLevel,
+                });
+                //opt.curDbgItems.push(lnk);
             }
         });
-        if (stockPointer > maxLevel) {
-            maxLevel = stockPointer;
-            //console.log(`new max level ${stockPointer} call level ${toLevel}`);
+        pcAmount--;
+        if (!pcAmount) break;
+        withoutSort--;
+        if (withoutSort < 0) {
+            opt.stock = orderBy(opt.stock, 'fromCum', 'desc');
+            withoutSort = opt.withoutSortCfg || 100;
         }
     }
-    console.log(`new max level ${maxLevel} `);
-    
+    opt.stock = orderBy(opt.stock, 'fromCum', 'desc');
 }
 
 
@@ -166,10 +183,12 @@ const core = {
     parseFile,
     origMap: parseFile(debugfile),
     getRoute,
+    initSearchStart,
     cleanMap,
     getMap,
     getMapAt: (x, y) => get(getMap(),[y,x]),
-    getMapByObj: obj => get(getMap(),[obj.y,obj.x]),
+    getMapByObj: obj => get(getMap(), [obj.y, obj.x]),
+    curSearch: null,
 };
 
 export default core;
