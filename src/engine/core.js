@@ -1,4 +1,4 @@
-import { get, orderBy} from 'lodash';
+import { get, sortedIndexBy, findIndex} from 'lodash';
 
 const debugfile = `
  __________________________________________________________________
@@ -28,8 +28,8 @@ function getPathWeight(c) {
 }
 
 function clearCell(c) {
-    c.shortestSpLink = null;
-    c.shortestSpLinkDist = MAXWEIGHT;
+    //c.shortestSpLink = null;
+    //c.shortestSpLinkDist = MAXWEIGHT;
 }
 
 function parseFile(file) {    
@@ -93,6 +93,7 @@ function parseFile(file) {
                 const bt = btr[c.x];
                 c.spLinks.push(bt);
             }
+            c.id = `${c.x}-${c.y}`;
             return c;
         });
     });
@@ -111,67 +112,84 @@ function cleanMap() {
     });
 }
 
-function initSearchStart(x, y) {
-    const ret = {
-        stock: [],
-        processCount: 0,
+function initSearchStart(x, y, checkCur) {
+    const c = core.getMapAt(x, y);
+    const stock = [];
+    const gScore = {
+        [c.id]: 1,
     };
-    ret.stock.push({
-        c: core.getMapAt(x, y),
-        from: null,
-        fromCum: 0,
-        level: 0,
-    });
+    const inStock = {};
+    const ret = {
+        stock,
+        inStock,
+        gScore,
+        cameFrom: {},
+        //fastCover: true,
+        processCount: 0,
+        checkCur,
+        addOpenSet: itm => {
+            inStock[itm.id] = true;
+            stock.splice(sortedIndexBy(stock, itm, x => -(gScore[x.id] || MAXWEIGHT)), 0, itm);
+        }
+    };
+    
+    ret.addOpenSet(c);
     return ret;
 }
-function getRoute(opt) {    
-    let withoutSort = opt.withoutSort || 100;
-    while (opt.stock.length) {
-        const { c, from, fromCum, level } = opt.stock.pop();
-        opt.processCount++;
-        if (c.shortestSpLinkDist < fromCum) continue;        
-        c.shortestSpLinkDist = fromCum;
-        c.shortestSpLink = from;
-        const toLevel = level + 1;
-        const toCum = fromCum + c.getPathWeight();
-        if (opt.checkCur && opt.checkCur(opt, c, from, fromCum, toCum)) break;
-        c.spLinks.forEach(lnk => {
-            if (lnk.shortestSpLinkDist > toCum) {                
-                opt.stock.push({
-                    c: lnk,
-                    from: c,
-                    fromCum: toCum,
-                    level: toLevel,
-                });
+function processRoute(opt) {
+    const { stock, inStock, gScore, cameFrom } = opt;
+    while (stock.length) {
+        const c = stock.pop();
+        if (opt.checkCur) {
+            const cr = opt.checkCur(c, opt);
+            if (cr === 1) return;  //found
+            if (cr === -1) continue; //ignore
+            if (cr === 2) {
+                inStock[c.id] = c;
+                opt.addOpenSet(c);
+                return;
             }
-        });        
-        withoutSort--;
-        if (withoutSort < 0) {
-            opt.stock = orderBy(opt.stock, 'fromCum', 'desc');
-            withoutSort = opt.withoutSortCfg || 100;
         }
+        delete inStock[c.id];
+        opt.processCount++;         
+                    
+        const cScore = gScore[c.id];
+        c.spLinks.forEach(lnk => {
+            const toCum = cScore + lnk.getPathWeight();
+            const lnkId = lnk.id;
+            const lScore = gScore[lnkId] || MAXWEIGHT;
+            if (lScore > toCum) {
+                cameFrom[lnkId] = c;
+                gScore[lnkId] = toCum;
+                if (inStock[lnkId]) {
+                    const idx = findIndex(stock, s => s.id === lnkId);
+                    stock.splice(idx, 1);
+                }
+                opt.addOpenSet(lnk);
+            }
+        });
+        
     }
-    //opt.stock = orderBy(opt.stock, 'fromCum', 'desc');
 }
 
 
-function getRouteOverflowed(c, from = null, fromCum = 0, level = 0) {
-    if (c.shortestSpLinkDist <= fromCum) return;
-    c.shortestSpLinkDist = fromCum;
-    c.shortestSpLink = from;
-    const toLevel = level + 1;
-    const toCum = fromCum + c.getPathWeight();
-    c.spLinks.forEach(lnk => getRoute(lnk, c, toCum, toLevel));    
+function findPath(opt) {
+    const { x, y } = opt;
+    const prm = initSearchStart(x, y, opt.checkCur);
+    processRoute(prm);
+    return prm;
 }
 
 function getMap() {
     return core.origMap.map;
 }
 const core = {
+    MAXWEIGHT,
     run,
+    findPath,
     parseFile,
     origMap: parseFile(debugfile),
-    getRoute,
+    processRoute,
     initSearchStart,
     cleanMap,
     getMap,
