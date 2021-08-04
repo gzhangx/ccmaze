@@ -59,28 +59,28 @@ function runLoop(thisRender) {
     }
     if (uiInfo.searchOpt) {
         uiInfo.searchOpt.processCount = 0;
-        core.processRoute(uiInfo.searchOpt);
-
-        const { gScore } = uiInfo.searchOpt;
-        debugF.map.forEach(ml => {
-            ml.forEach(c => {
-                //console.log(`rect at ${ml.x} ${ml.y}`);
-                //console.log(ml)            
-                if (c.cellType !== ' ')
-                    drect(c);
-                else {
-                    const score = gScore[c.id] || core.MAXWEIGHT;
-                    if (score < 99999) {
-                        c.strokeStyle = '#ffFF00';
-                        c.lineWidth = 2;
-                        drect(c, { actualSize: 4, fillStyle: '#330033', text: score.toString() });
-                    }
-                    c.strokeStyle = '#ff0000';
-                    c.lineWidth = 2;
-                }
-            });
-        });
+        core.processRoute(uiInfo.searchOpt);        
     }
+
+    const { gScore } = uiInfo.searchOpt || { gScore: {}};
+    debugF.map.forEach(ml => {
+        ml.forEach(c => {
+            //console.log(`rect at ${ml.x} ${ml.y}`);
+            //console.log(ml)            
+            if (c.cellType !== ' ')
+                drect(c);
+            else {
+                const score = gScore[c.id] || core.MAXWEIGHT;
+                if (score < 99999) {
+                    c.strokeStyle = '#ffFF00';
+                    c.lineWidth = 2;
+                    //drect(c, { actualSize: 4, fillStyle: '#330033', text: score.toString() });
+                }
+                c.strokeStyle = '#ff0000';
+                c.lineWidth = 2;
+            }
+        });
+    });
 
     
     
