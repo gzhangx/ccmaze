@@ -38,8 +38,10 @@ function runLoop(thisRender) {
         //console.log(debugF.map)
     //core.cleanMap();
     //core.getRoute(core.getMapAt(2, 4));
+    let showDebugStats = false;
     if (uiInfo.debugStart) {
         uiInfo.debugStart = false;
+        showDebugStats = true;
         core.cleanMap();
         uiInfo.searchOpt = core.initSearchStart(2, 4);
     }
@@ -87,6 +89,13 @@ function runLoop(thisRender) {
     const timeSpent = new Date() - start;
     if (timeSpent > 100)
         console.log(`rendering time ${timeSpent}`);
+    
+    if (showDebugStats) {
+        uiInfo.setGameState(v=>({
+            ...v,
+            debugText: `rendering time ${timeSpent}`
+        }))
+    }
 }
 
 

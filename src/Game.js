@@ -11,7 +11,8 @@ function Scene () {
       width: 1024,
       height: 768,
     }
-  })
+  });
+  uiInfo.setGameState = setGameState;
 
   useEffect(() => {
     const render = createRender(drawRef.current);
@@ -19,6 +20,7 @@ function Scene () {
     const height = core.origMap.h * BLKSIZE;
     setGameState({
       ...gameState,
+      debugText: '',
       gcanv: {
         width,
         height,
@@ -48,6 +50,7 @@ function Scene () {
         width={gameState.gcanv.width} height={gameState.gcanv.height} style={{ background: 'yellow' }}></canvas>
       <br></br>
       <span>{gameState.gcanv.width},{gameState.gcanv.height} {core.origMap.w}-{core.origMap.h}</span>
+      <span>{gameState.debugText}</span>
       <button onClick={() => {
         uiInfo.debugStart = true;
       } }>Start</button>

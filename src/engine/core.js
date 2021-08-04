@@ -26,6 +26,12 @@ function getPathWeight(c) {
     if (c === ' ') return 1;
     return 10000;
 }
+
+function clearCell(c) {
+    c.shortestSpLink = null;
+    c.shortestSpLinkDist = MAXWEIGHT;
+}
+
 function parseFile(file) {    
     const parsed = file.split('\n').reduce((acc, l) => {
         const curl = l.split('');
@@ -67,8 +73,7 @@ function parseFile(file) {
     }).map(r => {
         return r.map(c => {
             if (!c.spLinks) c.spLinks = [];
-            c.shortestSpLink = null;
-            c.shortestSpLinkDist = MAXWEIGHT;            
+            clearCell(c);
             c.getPathWeight = () => c.pathWeight;
             if (c.x > 0) {
                 const lft = r[c.x - 1];                
@@ -100,23 +105,16 @@ function run() {
 
 const MAXWEIGHT = 999999;
 function cleanMap() {
-    return {
-        ...core.origMap,
-        map: core.origMap.map.map(r => {
-            return r.map(c => {
-                c.shortestSpLink = null;
-                c.shortestSpLinkDist = MAXWEIGHT;            
-                return c;
-            })
-        })
-    }
+    const map = getMap();
+    map.forEach(r => {
+        r.forEach(clearCell);
+    });
 }
 
 function initSearchStart(x, y) {
     const ret = {
         stock: [],
-        processAmount: -1,
-        curDbgItems: [],
+        processCount: 0,
     };
     ret.stock.push({
         c: core.getMapAt(x, y),
@@ -126,43 +124,34 @@ function initSearchStart(x, y) {
     });
     return ret;
 }
-function getRoute(opt) {
-    let pcAmount = opt.processAmount || 1;
-        
+function getRoute(opt) {    
     let withoutSort = opt.withoutSort || 100;
     while (opt.stock.length) {
-        //console.log(stock[0].fromCum + " " + stock[stock.length - 1].fromCum)
-        const { c, from, fromCum, level } = opt.stock.pop();        
-        if (c.shortestSpLinkDist < fromCum) continue;
-        //opt.curDbgItems.push(c);
+        const { c, from, fromCum, level } = opt.stock.pop();
+        opt.processCount++;
+        if (c.shortestSpLinkDist < fromCum) continue;        
         c.shortestSpLinkDist = fromCum;
         c.shortestSpLink = from;
         const toLevel = level + 1;
         const toCum = fromCum + c.getPathWeight();
+        if (opt.checkCur && opt.checkCur(opt, c, from, fromCum, toCum)) break;
         c.spLinks.forEach(lnk => {
-            if (lnk.shortestSpLinkDist > toCum) {
-                //lnk.shortestSpLinkDist = toCum;
-                //lnk.shortestSpLink = c;
-                //lnk.processed = false;
-                //console.log(`pushing ${lnk.x} ${lnk.y} ${lnk.shortestSpLinkDist} ${toCum}`);
+            if (lnk.shortestSpLinkDist > toCum) {                
                 opt.stock.push({
                     c: lnk,
                     from: c,
                     fromCum: toCum,
                     level: toLevel,
                 });
-                //opt.curDbgItems.push(lnk);
             }
-        });
-        pcAmount--;
-        if (!pcAmount) break;
+        });        
         withoutSort--;
         if (withoutSort < 0) {
             opt.stock = orderBy(opt.stock, 'fromCum', 'desc');
             withoutSort = opt.withoutSortCfg || 100;
         }
     }
-    opt.stock = orderBy(opt.stock, 'fromCum', 'desc');
+    //opt.stock = orderBy(opt.stock, 'fromCum', 'desc');
 }
 
 
