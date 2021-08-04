@@ -45,7 +45,9 @@ function Scene () {
           obtainMousePos(e);
           uiInfo.mousePos.clicked = true;          
         }}
-        width={gameState.gcanv.width} height={gameState.gcanv.height} style={{background:'yellow'}}></canvas>
+        width={gameState.gcanv.width} height={gameState.gcanv.height} style={{ background: 'yellow' }}></canvas>
+      <br></br>
+      <span>{gameState.gcanv.width},{gameState.gcanv.height} {core.origMap.w}-{core.origMap.h}</span>
       <button onClick={() => {
         uiInfo.debugStart = true;
       } }>Start</button>
