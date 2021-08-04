@@ -1,7 +1,7 @@
 import core from '../engine/core';
 
 const REFRESH = 50;
-const BLKSIZE = 10;
+export const BLKSIZE = 10;
 const BLKSH = BLKSIZE / 2;
 let test = 1;
 
@@ -99,11 +99,10 @@ function run() {
     setTimeout(run, REFRESH);
     thisRender.runLoop(thisRender);
 }
-export const createRender = (canvas, mousePos)=> {
+export const createRender = (canvas)=> {
     const context = canvas.getContext('2d');
     thisRender.context = context;
     thisRender.canvas = canvas;
-    thisRender.mousePos = mousePos;
 
     thisRender.start = () => {
         if (!thisRender.started) {

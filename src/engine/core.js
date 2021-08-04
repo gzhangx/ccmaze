@@ -178,7 +178,7 @@ function getRouteOverflowed(c, from = null, fromCum = 0, level = 0) {
 function getMap() {
     return core.origMap.map;
 }
-const core = {    
+const core = {
     run,
     parseFile,
     origMap: parseFile(debugfile),
