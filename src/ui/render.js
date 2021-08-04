@@ -1,5 +1,7 @@
 import core from '../engine/core';
 
+import { doMst } from '../engine/mst';
+
 const REFRESH = 50;
 export const BLKSIZE = 10;
 const BLKSH = BLKSIZE / 2;
@@ -56,6 +58,9 @@ function runLoop(thisRender) {
                 return 0;
             }
         });
+        uiInfo.debugMst = doMst(20, 20, { x: 1, y: 1 });
+        console.log('debugMsg');
+        console.log(uiInfo.debugMst);
     }
     if (uiInfo.searchOpt) {
         uiInfo.searchOpt.processCount = 0;
@@ -120,6 +125,21 @@ function runLoop(thisRender) {
             ...v,
             debugText: `rendering time ${lastTimeSpent}`
         }))
+    }
+ 
+    if (uiInfo.debugMst) {
+        c.strokeStyle = '#ff0000';
+        c.lineWidth = 4;
+        const MSGBLKSIZE =10;
+        uiInfo.debugMst.forEach(edge=>{
+            c.beginPath();
+            const { x, y } = edge.u;
+            const { x: tx, y: ty } = edge.v;
+
+            c.moveTo(x * MSGBLKSIZE , y * MSGBLKSIZE  );
+            c.lineTo(tx * MSGBLKSIZE , ty * MSGBLKSIZE );
+            c.stroke();
+        })
     }
 }
 
