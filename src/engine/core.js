@@ -1,5 +1,7 @@
 import { get, sortedIndexBy, findIndex} from 'lodash';
 
+import { generateMap } from './mst';
+
 const debugfile = `
  __________________________________________________________________
  |         ___________            |   __________________________   |
@@ -27,53 +29,21 @@ function getPathWeight(c) {
     return 10000;
 }
 
-function clearCell(c) {
-    //c.shortestSpLink = null;
-    //c.shortestSpLinkDist = MAXWEIGHT;
-}
-
-function parseFile(file) {    
-    const parsed = file.split('\n').reduce((acc, l) => {
-        const curl = l.split('');
+function parseFile(mGrid) {    
+    const parsed = mGrid.map.reduce((acc, curl) => {
         if (acc.w < curl.length) acc.w = curl.length;
-        const y = acc.map.length;
-        acc.h = y + 2;
-        const res = curl.reduce((acc, cellType, x) => {
-            if (cellType === '_') {
-                acc.top.push({ y, x, cellType: ' ', pathWeight: getPathWeight(' ') });
-                acc.btm.push({ y: y + 1, x, cellType, pathWeight: getPathWeight(cellType) });
-            } else {
-                acc.top.push({ y, x, cellType, pathWeight: getPathWeight(cellType)});
-                acc.btm.push({ y: y + 1, x, cellType, pathWeight: getPathWeight(cellType)});
-            }
-            return acc;
-        }, { top: [], btm: [] });
-        acc.map.push(res.top);
-        acc.map.push(res.btm);
+        acc.map.push(curl);
         return acc;
     }, {
         map: [],
-        w: 0,
-        h: 0,
+        w: mGrid.width,
+        h: mGrid.height,
     });
 
-    parsed.map = parsed.map.map((r,ii) => {
-        if (r.length === parsed.w) return r;        
-        const lastX = r[r.length - 1] || {x:0, y:ii};
-        const diff = parsed.w - r.length;
-        for (let i = 0; i < diff; i++) {
-            r.push({
-                x: lastX.x + i,
-                y: lastX.y,
-                cellType: ' ',
-                pathWeight: getPathWeight(' '),
-            });
-        }
-        return r;
-    }).map(r => {
+    parsed.map = parsed.map.map(r => {
         return r.map(c => {
             if (!c.spLinks) c.spLinks = [];
-            clearCell(c);
+            c.pathWeight = getPathWeight(c.cellType)
             c.getPathWeight = () => c.pathWeight;
             if (c.x > 0) {
                 const lft = r[c.x - 1];                
@@ -105,12 +75,6 @@ function run() {
 }
 
 const MAXWEIGHT = 999999;
-function cleanMap() {
-    const map = getMap();
-    map.forEach(r => {
-        r.forEach(clearCell);
-    });
-}
 
 function initSearchStart(x, y, checkCur) {
     const c = core.getMapAt(x, y);
@@ -188,10 +152,9 @@ const core = {
     run,
     findPath,
     parseFile,
-    origMap: parseFile(debugfile),
+    origMap: parseFile(generateMap(20, 20, { x:1, y:1})),
     processRoute,
     initSearchStart,
-    cleanMap,
     getMap,
     getMapAt: (x, y) => get(getMap(),[y,x]),
     getMapByObj: obj => get(getMap(), [obj.y, obj.x]),

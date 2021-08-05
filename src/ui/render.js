@@ -37,7 +37,7 @@ function runLoop(thisRender) {
             c.fillRect(x - hf, y - hf, actualSize, actualSize);            
         }
         if (text) {
-            c.fillText(text, x, y);
+            //c.fillText(text, x, y);
         }
     }
 
@@ -50,7 +50,6 @@ function runLoop(thisRender) {
     if (uiInfo.debugStart) {
         uiInfo.debugStart = false;
         showDebugStats = true;
-        core.cleanMap();
         uiInfo.searchOpt = core.findPath({
             x: 3, y: 4,
             checkCur: (opt, c) => {
@@ -58,7 +57,7 @@ function runLoop(thisRender) {
                 return 0;
             }
         });
-        uiInfo.debugMst = doMst(20, 20, { x: 1, y: 1 });
+        //uiInfo.debugMst = doMst(20, 20, { x: 1, y: 1 });
         console.log('debugMsg');
         console.log(uiInfo.debugMst);
     }

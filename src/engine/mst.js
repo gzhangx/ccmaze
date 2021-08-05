@@ -1,4 +1,4 @@
-import { remove, orderBy, sortedIndexBy } from 'lodash';
+import { remove, sortedIndexBy } from 'lodash';
 const WEIGHTMAX = 10;
 export function doMst(width, height, start) {
     const map = new Array(height).fill().map((r, rw) => {
@@ -89,4 +89,45 @@ export function doMst(width, height, start) {
         addNode(edge.v);
     }
     return resEdges;
+}
+
+export function generateMap(width, height, start) {
+    const edges = doMst(width, height, start);
+    const getId = v => `${v.x}-${v.y}`;
+    const getDbl = v => ({ x: v.x * 2, y: v.y * 2 });
+    const pointNames = edges.reduce((acc, e) => {
+        const v = getDbl(e.v);
+        const u = getDbl(e.u);        
+        acc[getId(v)] = true;
+        acc[getId(u)] = true;
+        const xdiff = (u.x - v.x)>>1;
+        if (xdiff) {
+            acc[getId({ x: u.x + xdiff, y: u.y })] = true;
+        } else {
+            const ydiff = (u.y - v.y)>>1;
+            if (ydiff)
+                acc[getId({ x: u.x, y: u.y + ydiff })] = true;
+        }
+        return acc;
+    }, {});
+    const map = new Array(height*2).fill().map((_, y) => {
+        const r = new Array(width*2).fill();
+        return r.map((_, x) => {
+            const itm = {                
+                x, y,
+                cellType: 'x'
+            }
+            itm.id = getId(itm);
+            if (pointNames[itm.id]) {
+                itm.cellType = ' ';
+            }
+            return itm;
+        });
+    });
+
+    return {
+        width: width*2,
+        height: height*2,
+        map,
+    };
 }
