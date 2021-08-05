@@ -103,6 +103,7 @@ function runLoop(thisRender) {
         }))
     }
  
+    /*
     if (core.debugEdges) {
         c.strokeStyle = '#ff0000';
         c.lineWidth = 4;
@@ -118,7 +119,7 @@ function runLoop(thisRender) {
             c.stroke();
         })
     }
-    
+    */
     if (mouseObj && uiInfo.searchOpt) {
         let cur = mouseObj;
         while (cur) {
