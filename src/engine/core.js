@@ -70,10 +70,6 @@ function parseFile(mGrid) {
     return parsed;
 }
 
-function run() {
-    setTimeout(run, 1000);
-}
-
 const MAXWEIGHT = 999999;
 
 function initSearchStart(x, y, checkCur) {
@@ -151,7 +147,6 @@ function getMap() {
 const debugEdges = generateMap(20, 20, { x: 1, y: 1 });
 const core = {
     MAXWEIGHT,
-    run,
     findPath,
     parseFile,
     debugEdges,

@@ -3,6 +3,7 @@ import React, {useEffect, useState} from "react";
 import core from './engine/core';
 
 import { createRender, uiInfo, BLKSIZE } from './ui/render';
+import game from './engine/game';
 
 function Scene () {
   const drawRef = React.createRef();
@@ -16,6 +17,7 @@ function Scene () {
 
   useEffect(() => {
     const render = createRender(drawRef.current);
+    game.start();
     const width = core.origMap.w * BLKSIZE;
     const height = core.origMap.h * BLKSIZE;
     setGameState({
@@ -33,8 +35,11 @@ function Scene () {
   const obtainMousePos = e => {
     const y = (e.clientY - e.target.offsetTop)
     const x = (e.clientX - e.target.offsetLeft);
-    uiInfo.mousePos.x = x;
-    uiInfo.mousePos.y = y;
+    const mousePos = game.inputInfo.mousePos;
+    mousePos.x = x;
+    mousePos.y = y;
+    mousePos.blkx = parseInt((x + 1) / BLKSIZE);
+    mousePos.blky = parseInt((y + 1) / BLKSIZE);
     return { x, y };
   }
     //core.inputs.isDesignMode = this.props.inputs.isDesignMode;
@@ -45,7 +50,7 @@ function Scene () {
         }}
         onClick={e => {
           obtainMousePos(e);
-          uiInfo.mousePos.clicked = true;          
+          game.inputInfo.mousePos.clicked = true;          
         }}
         width={gameState.gcanv.width} height={gameState.gcanv.height} style={{ background: 'gray' }}></canvas>
       <br></br>

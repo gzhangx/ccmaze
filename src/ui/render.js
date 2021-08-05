@@ -1,4 +1,5 @@
 import core from '../engine/core';
+import game from '../engine/game';
 
 import { doMst } from '../engine/mst';
 
@@ -8,7 +9,6 @@ const BLKSH = BLKSIZE / 2;
 let test = 1;
 
 export const uiInfo = {
-    mousePos: { x: 0, y: 0 },
     searchOpt: null, //debug opt
 }
 
@@ -84,8 +84,8 @@ function runLoop(thisRender) {
     if (timeSpent > 100)
         console.log(`rendering time ${timeSpent}`);
     
-    const mouseObjX = parseInt(uiInfo.mousePos.x / BLKSIZE);
-    const mouseObjY = parseInt(uiInfo.mousePos.y / BLKSIZE);
+    const mouseObjX = parseInt(game.inputInfo.mousePos.x / BLKSIZE);
+    const mouseObjY = parseInt(game.inputInfo.mousePos.y / BLKSIZE);
     const mouseObj = core.getMapAt(mouseObjX, mouseObjY);
     if (mouseObj) {
         uiInfo.setGameState(v => ({
@@ -128,6 +128,10 @@ function runLoop(thisRender) {
             cur = uiInfo.searchOpt.cameFrom[cur.id];
         }
     }
+
+    game.data.soliders.forEach(s => {
+        drect(s, { actualSize: 4, fillStyle: '#ff00ff', text: 's' });
+    })
 }
 
 
