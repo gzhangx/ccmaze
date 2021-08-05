@@ -57,9 +57,7 @@ function runLoop(thisRender) {
                 return 0;
             }
         });
-        //uiInfo.debugMst = doMst(20, 20, { x: 1, y: 1 });
-        console.log('debugMsg');
-        console.log(uiInfo.debugMst);
+        //uiInfo.debugMst = doMst(20, 20, { x: 1, y: 1 });        
     }
     if (uiInfo.searchOpt) {
         uiInfo.searchOpt.processCount = 0;
@@ -75,41 +73,20 @@ function runLoop(thisRender) {
                 drect(c);
             else {
                 const score = gScore[c.id] || core.MAXWEIGHT;
-                if (score < 99999) {
-                    c.strokeStyle = '#ffFF00';
-                    c.lineWidth = 2;
+                if (score < 99999) {                    
                     //drect(c, { actualSize: 4, fillStyle: '#330033', text: score.toString() });
-                }
-                c.strokeStyle = '#ff0000';
-                c.lineWidth = 2;
+                }                
             }
         });
     });
-
-    
-    
-
-
-    
-    const mouseObjX = parseInt(uiInfo.mousePos.x / BLKSIZE);
-    const mouseObjY = parseInt(uiInfo.mousePos.y / BLKSIZE);
-    const mouseObj = core.getMapAt(mouseObjX, mouseObjY);
-    if (mouseObj && uiInfo.searchOpt) {
-        let cur = mouseObj;        
-        while (cur) {
-            //console.log(`${cur.x},${cur.y} ${cur.shortestSpLinkDist}`);
-            drect(cur, { actualSize: 4, fillStyle: '#cccccc', text:(uiInfo.searchOpt.gScore[cur.id]||'NA').toString() });
-            cur = uiInfo.searchOpt.cameFrom[cur.id];
-        }
-    }
-    drect({ x: 2, y: 4 });
-
-    drect({ x: 2, y: 4 });
-    test++;
     
     const timeSpent = new Date() - start;
     if (timeSpent > 100)
         console.log(`rendering time ${timeSpent}`);
+    
+    const mouseObjX = parseInt(uiInfo.mousePos.x / BLKSIZE);
+    const mouseObjY = parseInt(uiInfo.mousePos.y / BLKSIZE);
+    const mouseObj = core.getMapAt(mouseObjX, mouseObjY);
     if (mouseObj) {
         uiInfo.setGameState(v => ({
             ...v,
@@ -126,19 +103,29 @@ function runLoop(thisRender) {
         }))
     }
  
-    if (uiInfo.debugMst) {
+    if (core.debugEdges) {
         c.strokeStyle = '#ff0000';
         c.lineWidth = 4;
-        const MSGBLKSIZE =10;
-        uiInfo.debugMst.forEach(edge=>{
+        const MSGBLKSIZE = 20;
+        const pad = 0;
+        core.debugEdges.edges.forEach(edge=>{
             c.beginPath();
             const { x, y } = edge.u;
             const { x: tx, y: ty } = edge.v;
 
-            c.moveTo(x * MSGBLKSIZE , y * MSGBLKSIZE  );
-            c.lineTo(tx * MSGBLKSIZE , ty * MSGBLKSIZE );
+            c.moveTo(x * MSGBLKSIZE +pad, y * MSGBLKSIZE +pad );
+            c.lineTo(tx * MSGBLKSIZE +pad, ty * MSGBLKSIZE +pad);
             c.stroke();
         })
+    }
+    
+    if (mouseObj && uiInfo.searchOpt) {
+        let cur = mouseObj;
+        while (cur) {
+            //console.log(`${cur.x},${cur.y} ${cur.shortestSpLinkDist}`);
+            drect(cur, { actualSize: 4, fillStyle: '#cccccc', text: (uiInfo.searchOpt.gScore[cur.id] || 'NA').toString() });
+            cur = uiInfo.searchOpt.cameFrom[cur.id];
+        }
     }
 }
 

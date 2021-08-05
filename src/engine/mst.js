@@ -102,11 +102,11 @@ export function generateMap(width, height, start) {
         acc[getId(u)] = true;
         const xdiff = (u.x - v.x)>>1;
         if (xdiff) {
-            acc[getId({ x: u.x + xdiff, y: u.y })] = true;
+            acc[getId({ x: v.x + xdiff, y: v.y })] = true;
         } else {
             const ydiff = (u.y - v.y)>>1;
             if (ydiff)
-                acc[getId({ x: u.x, y: u.y + ydiff })] = true;
+                acc[getId({ x: v.x, y: v.y + ydiff })] = true;
         }
         return acc;
     }, {});
@@ -129,5 +129,6 @@ export function generateMap(width, height, start) {
         width: width*2,
         height: height*2,
         map,
+        edges,
     };
 }

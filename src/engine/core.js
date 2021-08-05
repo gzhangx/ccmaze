@@ -147,12 +147,15 @@ function findPath(opt) {
 function getMap() {
     return core.origMap.map;
 }
+
+const debugEdges = generateMap(20, 20, { x: 1, y: 1 });
 const core = {
     MAXWEIGHT,
     run,
     findPath,
     parseFile,
-    origMap: parseFile(generateMap(20, 20, { x:1, y:1})),
+    debugEdges,
+    origMap: parseFile(debugEdges),
     processRoute,
     initSearchStart,
     getMap,
