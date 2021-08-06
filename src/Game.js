@@ -59,7 +59,14 @@ function Scene () {
       <span>{gameState.debugText}</span>
       <button onClick={() => {
         uiInfo.debugStart = true;
-      } }>Start</button>
+      }}>Start</button>
+      {
+        ['defTank', 'wall'].map(name => {
+          return <button onClick={() => {
+            game.inputInfo.mouseClickType = name;
+          }}>{ name}</button>
+        })
+      }      
     </div>;
 }
 export default Scene;

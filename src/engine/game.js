@@ -10,6 +10,7 @@ const core = {
     data,
     inputInfo: {
         mousePos: { x: 0, y: 0 },
+        mouseClickType: null,
     },
     addSolider: s => {
         data.soliders.push(s);

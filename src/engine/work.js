@@ -1,30 +1,35 @@
 import core from './core';
 
 export function doWork(game) {
-    const { mousePos } = game.inputInfo;
+    const { mousePos, mouseClickType } = game.inputInfo;
     const clicked = mousePos.clicked;
     if (clicked) {
         mousePos.clicked = false;
-        const solider = { x: mousePos.blkx, y: mousePos.blky, moveTo:[], speed:1, curMoveTime:0 };
-        game.addSolider(solider);
-        const res = core.findPath({
-            x: 3, y: 4,
-            checkCur: (opt, c) => {
-                if (opt.processCount > 1000) return 2;
-                return 0;
-            }
-        });
-        const mouseObj = core.getMapAt(solider.x, solider.y);
-        console.log('mouse');
-        console.log(mouseObj)
-        if (mouseObj) {
-            let cur = mouseObj;            
-            while (cur) {
-                console.log(`in mouse ${cur.x},${cur.y}`);                
-                cur = res.cameFrom[cur.id];
-                if (cur) solider.moveTo.push(cur);
+        if (mouseClickType === 'solider') {
+            const solider = { x: mousePos.blkx, y: mousePos.blky, moveTo: [], speed: 1, curMoveTime: 0 };
+            game.addSolider(solider);
+            const res = core.findPath({
+                x: 3, y: 4,
+                checkCur: (opt, c) => {
+                    if (opt.processCount > 1000) return 2;
+                    return 0;
+                }
+            });
+            const mouseObj = core.getMapAt(solider.x, solider.y);
+            console.log('mouse');
+            console.log(mouseObj)
+            if (mouseObj) {
+                let cur = mouseObj;
+                while (cur) {
+                    console.log(`in mouse ${cur.x},${cur.y}`);
+                    cur = res.cameFrom[cur.id];
+                    if (cur) solider.moveTo.push(cur);
+                }
             }
         }
+
+        const handler = mouseClickTypeMap[mouseClickType];
+        if (handler) handler(mousePos);
     }
 
 
@@ -45,5 +50,13 @@ export function doWork(game) {
         }
     });
 
+
+}
+
+const mouseClickTypeMap = {
+    'tank': placeTank,
+}
+
+function placeTank(mousePos) {
 
 }
