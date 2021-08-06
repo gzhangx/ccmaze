@@ -7,7 +7,8 @@ const REFRESH = 50;
 export const BLKSIZE = 10;
 const BLKSH = BLKSIZE / 2;
 let test = 1;
-
+let lastDebugMsgTime = new Date();
+let lastDebugMsgToggle = false;
 export const uiInfo = {
     searchOpt: null, //debug opt
 }
@@ -124,10 +125,18 @@ function runLoop(thisRender) {
         const dops = uiInfo.searchOpt.getWaypointsFromPath(mouseObj);
         dops.forEach(cur => drect(cur, { actualSize: 4, fillStyle: '#cccccc', text: (uiInfo.searchOpt.gScore[cur.id] || 'NA').toString() }));        
     }
-
+    
     game.data.mapObjects.forEach(s => {
+        //if (lastDebugMsgToggle)
+        //    console.log(`process obj ${s.x} ${s.y} ${s.name}`)
         drect(s, { actualSize: 4, fillStyle: '#ff00ff', text: 's' });
-    })
+    });
+
+    lastDebugMsgToggle = false;
+    if (new Date().getTime() - lastDebugMsgTime.getTime() > 1000) {
+        lastDebugMsgTime = new Date();
+        lastDebugMsgToggle = true;
+    }
 }
 
 

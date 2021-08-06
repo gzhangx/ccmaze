@@ -36,10 +36,10 @@ function Scene () {
     const y = (e.clientY - e.target.offsetTop)
     const x = (e.clientX - e.target.offsetLeft);
     const mousePos = game.inputInfo.mousePos;
-    mousePos.x = x;
-    mousePos.y = y;
-    mousePos.blkx = parseInt((x + 1) / BLKSIZE);
-    mousePos.blky = parseInt((y + 1) / BLKSIZE);
+    mousePos.actualX = x;
+    mousePos.actualY = y;
+    mousePos.x = parseInt((x + 1) / BLKSIZE);
+    mousePos.y = parseInt((y + 1) / BLKSIZE);
     return { x, y };
   }
     //core.inputs.isDesignMode = this.props.inputs.isDesignMode;

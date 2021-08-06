@@ -146,7 +146,7 @@ const getMapAt = (x, y) => get(getMap(), [y, x]);
 function getWaypointsFromPath(res, xy) {
     const moveTo = [];
     let cur = getMapAt(xy.x, xy.y);
-    while (cur) {        
+    while (cur) {
         cur = res.cameFrom[cur.id];
         if (cur) moveTo.push(cur);
     }
