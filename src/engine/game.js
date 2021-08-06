@@ -3,7 +3,7 @@ const RUNINT = 100;
 let started = false;
 
 const data = {
-    soliders: [],
+    mapObjects: [],
 };
 
 const core = {
@@ -12,8 +12,8 @@ const core = {
         mousePos: { x: 0, y: 0 },
         mouseClickType: null,
     },
-    addSolider: s => {
-        data.soliders.push(s);
+    addMapObject: s => {
+        data.mapObjects.push(s);
     },
     doWork,
     start: () => {

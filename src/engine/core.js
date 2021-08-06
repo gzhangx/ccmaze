@@ -137,7 +137,20 @@ function findPath(opt) {
     const { x, y } = opt;
     const prm = initSearchStart(x, y, opt.checkCur);
     processRoute(prm);
+    prm.getWaypointsFromPath = xy => getWaypointsFromPath(prm, xy);
     return prm;
+}
+
+const getMapAt = (x, y) => get(getMap(), [y, x]);
+
+function getWaypointsFromPath(res, xy) {
+    const moveTo = [];
+    let cur = getMapAt(xy.x, xy.y);
+    while (cur) {        
+        cur = res.cameFrom[cur.id];
+        if (cur) moveTo.push(cur);
+    }
+    return moveTo;
 }
 
 function getMap() {
@@ -148,13 +161,14 @@ const debugEdges = generateMap(20, 20, { x: 1, y: 1 });
 const core = {
     MAXWEIGHT,
     findPath,
+    getWaypointsFromPath,
     parseFile,
     debugEdges,
     origMap: parseFile(debugEdges),
     processRoute,
     initSearchStart,
     getMap,
-    getMapAt: (x, y) => get(getMap(),[y,x]),
+    getMapAt,
     getMapByObj: obj => get(getMap(), [obj.y, obj.x]),
     curSearch: null,
 };

@@ -61,7 +61,7 @@ function Scene () {
         uiInfo.debugStart = true;
       }}>Start</button>
       {
-        ['defTank', 'wall'].map(name => {
+        ['solider', 'defTank', 'wall'].map(name => {
           return <button onClick={() => {
             game.inputInfo.mouseClickType = name;
           }}>{ name}</button>

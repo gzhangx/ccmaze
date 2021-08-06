@@ -119,17 +119,13 @@ function runLoop(thisRender) {
             c.stroke();
         })
     }
-    */
+    */    
     if (mouseObj && uiInfo.searchOpt) {
-        let cur = mouseObj;
-        while (cur) {
-            //console.log(`${cur.x},${cur.y} ${cur.shortestSpLinkDist}`);
-            drect(cur, { actualSize: 4, fillStyle: '#cccccc', text: (uiInfo.searchOpt.gScore[cur.id] || 'NA').toString() });
-            cur = uiInfo.searchOpt.cameFrom[cur.id];
-        }
+        const dops = uiInfo.searchOpt.getWaypointsFromPath(mouseObj);
+        dops.forEach(cur => drect(cur, { actualSize: 4, fillStyle: '#cccccc', text: (uiInfo.searchOpt.gScore[cur.id] || 'NA').toString() }));        
     }
 
-    game.data.soliders.forEach(s => {
+    game.data.mapObjects.forEach(s => {
         drect(s, { actualSize: 4, fillStyle: '#ff00ff', text: 's' });
     })
 }
