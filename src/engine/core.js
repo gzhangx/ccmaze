@@ -72,8 +72,8 @@ function parseFile(mGrid) {
 
 const MAXWEIGHT = 999999;
 
-function initSearchStart(x, y, checkCur) {
-    const c = core.getMapAt(x, y);
+function initSearchStart(opt, checkCur) {
+    const c = core.getMapAt(opt);
     const stock = [];
     const gScore = {
         [c.id]: 1,
@@ -134,18 +134,18 @@ function processRoute(opt) {
 
 
 function findPath(opt) {
-    const { x, y } = opt;
-    const prm = initSearchStart(x, y, opt.checkCur);
+    //const { x, y } = opt;
+    const prm = initSearchStart(opt, opt.checkCur);
     processRoute(prm);
     prm.getWaypointsFromPath = xy => getWaypointsFromPath(prm, xy);
     return prm;
 }
 
-const getMapAt = (x, y) => get(getMap(), [y, x]);
+const getMapAt = opt => get(getMap(), [opt.y, opt.x]);
 
 function getWaypointsFromPath(res, xy) {
     const moveTo = [];
-    let cur = getMapAt(xy.x, xy.y);
+    let cur = getMapAt(xy);
     while (cur) {
         cur = res.cameFrom[cur.id];
         if (cur) moveTo.push(cur);

@@ -84,10 +84,8 @@ function runLoop(thisRender) {
     const timeSpent = new Date() - start;
     if (timeSpent > 100)
         console.log(`rendering time ${timeSpent}`);
-    
-    const mouseObjX = parseInt(game.inputInfo.mousePos.x / BLKSIZE);
-    const mouseObjY = parseInt(game.inputInfo.mousePos.y / BLKSIZE);
-    const mouseObj = core.getMapAt(mouseObjX, mouseObjY);
+        
+    const mouseObj = core.getMapAt(game.inputInfo.mousePos);
     if (mouseObj) {
         uiInfo.setGameState(v => ({
             ...v,
