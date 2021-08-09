@@ -2,6 +2,7 @@ import core from '../engine/core';
 import game from '../engine/game';
 
 import { doMst } from '../engine/mst';
+import { doCircle, fullCircle } from '../engine/utils';
 
 const REFRESH = 50;
 export const BLKSIZE = 10;
@@ -135,6 +136,11 @@ function runLoop(thisRender) {
         lastDebugMsgTime = new Date();
         lastDebugMsgToggle = true;
     }
+
+
+    fullCircle(20, 10, 8, (x, y) => {
+        drect({ x, y }, { actualSize: 10, fillStyle: '#ffffff' });
+    });
 }
 
 
