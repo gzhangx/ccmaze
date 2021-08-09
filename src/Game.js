@@ -66,7 +66,15 @@ function Scene () {
             game.inputInfo.mouseClickType = name;
           }}>{ name}</button>
         })
-      }      
+      }
+      <br></br>
+      {
+        ['o1', 'o2',].map(name => {
+          return <button onClick={() => {
+            game.inputInfo.owner = name;
+          }}>Woner {name}</button>
+        })
+      }
     </div>;
 }
 export default Scene;

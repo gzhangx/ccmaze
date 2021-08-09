@@ -3,12 +3,12 @@ import mover from '../units/mover';
 import tanker from '../units/tanker';
 
 export function doWork(game) {
-    const { mousePos, mouseClickType } = game.inputInfo;
+    const { mousePos, mouseClickType, owner } = game.inputInfo;
     const clicked = mousePos.clicked;
     if (clicked) {
         mousePos.clicked = false;
         const handler = mouseClickTypeMap[mouseClickType];
-        if (handler) handler(mousePos);
+        if (handler) handler({...mousePos, owner });
     }
 
 
@@ -23,15 +23,9 @@ const mouseClickTypeMap = {
 }
 
 function placeSolider(mousePos) {
-    mover({
-        x: mousePos.x,
-        y: mousePos.y,
-        name: 'solider',
-    })
+    //{x,y, owneer} = mousePos
+    mover(mousePos)
 }
 function placeTank(mousePos) {
-    tanker({
-        x: mousePos.x,
-        y: mousePos.y,
-    });
+    tanker(mousePos);
 }

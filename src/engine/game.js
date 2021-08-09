@@ -5,6 +5,7 @@ let started = false;
 
 const data = {
     mapObjects: [],
+    mapObjectKeys: {},
 };
 
 let curItemId = 0;
@@ -17,7 +18,9 @@ const core = {
         mouseClickType: null,
     },
     addMapObject: s => {
-        data.mapObjects.push(s);
+        if (!data.mapObjectKeys[s.id]) {
+            data.mapObjects.push(s);
+        }
     },
     removeMapObject: s => {
         remove(data.mapObjects, { id: s.id });
