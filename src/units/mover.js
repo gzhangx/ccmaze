@@ -10,11 +10,11 @@ export default function mover({ x, y, name }) {
             let found = null;
             const res = core.findPath({
                 x, y,
-                checkCur: (opt, c) => {
-                    if (opt.mapObjs) {
-                        const tnk = opt.mapObjs.filter(o => o.objType === 'tanker');
+                checkCur: (c, optt) => {
+                    if (c.mapObjs) {
+                        const tnk = c.mapObjs.filter(o => o.objType === 'tanker');
                         if (tnk.length) {
-                            found = opt;
+                            found = c;
                             obj.target = tnk[0];
                             return 1;
                         }
@@ -45,7 +45,7 @@ export default function mover({ x, y, name }) {
                     obj.y = toaddr.y;
                 }
             }            
-        } else {
+        } else if (obj.hasPath){
             game.removeMapObject(obj);
             if (obj.target) {
                 obj.target.life -= 10;

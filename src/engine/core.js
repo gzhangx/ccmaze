@@ -77,11 +77,15 @@ function initSearchStart(opt, checkCur) {
 }
 function processRoute(opt) {
     const { stock, inStock, gScore, cameFrom } = opt;
-    while (stock.length) {
+    let found = false;
+    while (stock.length || found) {
         const c = stock.pop();
         if (opt.checkCur) {
             const cr = opt.checkCur(c, opt);
-            if (cr === 1) return;  //found
+            if (cr === 1) {
+                found = c;
+                return;
+            }
             if (cr === -1) continue; //ignore
             if (cr === 2) {
                 inStock[c.id] = c;
