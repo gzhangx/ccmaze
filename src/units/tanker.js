@@ -11,7 +11,7 @@ export default function tanker({ x, y, name }) {
     obj.processingObj = () => {
         if (obj.life <= 0) {
             game.removeMapObject(obj);
-            cell.mapObjs.remove(obj);
+            cell.mapObjs = cell.mapObjs.filter(x => x !== obj);
         }
     };
     return obj;
