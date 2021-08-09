@@ -128,6 +128,9 @@ function runLoop(thisRender) {
     game.data.mapObjects.forEach(s => {
         //if (lastDebugMsgToggle)
         //    console.log(`process obj ${s.x} ${s.y} ${s.name}`)
+        if (s.objType === 'tanker') {
+            drect(s, { actualSize: 15, fillStyle: '#ff00ff', text: 's' });
+        }else
         drect(s, { actualSize: 4, fillStyle: '#ff00ff', text: 's' });
     });
 
@@ -140,7 +143,7 @@ function runLoop(thisRender) {
 
     if (mouseObj) {
         core.cirSearch(mouseObj.x, mouseObj.y, 20, (x, y) => {
-            drect({ x, y }, { actualSize: 10, fillStyle: '#ffffff' });
+            //drect({ x, y }, { actualSize: 10, fillStyle: '#ffffff' });
         })
     }
 }

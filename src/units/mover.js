@@ -6,15 +6,25 @@ export default function mover({ x, y, name }) {
     game.addMapObject(obj);
     obj.processingObj = () => {
         if (!obj.hasPath) {
+            let found = null;
             const res = core.findPath({
-                x: 3, y: 4,
+                x, y,
                 checkCur: (opt, c) => {
-                    if (opt.processCount > 1000) return 2;
+                    if (opt.mapObjs) {
+                        const tnk = opt.mapObjs.filter(o => o.objType === 'tanker');
+                        if (tnk.length) {
+                            found = opt;
+                            obj.target = opt;
+                            return 1;
+                        }
+                    }
                     return 0;
                 }
             });
-            obj.moveTo = res.getWaypointsFromPath(obj);
-            obj.hasPath = true;
+            if (found) {
+                obj.moveTo = res.getWaypointsFromPath(found);
+                obj.hasPath = true;
+            }
         }
 
         const mto = obj.moveTo[0];
@@ -33,6 +43,8 @@ export default function mover({ x, y, name }) {
             }            
         } else {
             game.removeMapObject(obj);
+            if (obj.target)
+                obj.target.life -= 10;
         }
     };
     return obj;

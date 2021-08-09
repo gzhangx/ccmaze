@@ -1,5 +1,6 @@
 import core from './core';
 import mover from '../units/mover';
+import tanker from '../units/tanker';
 
 export function doWork(game) {
     const { mousePos, mouseClickType } = game.inputInfo;
@@ -17,7 +18,7 @@ export function doWork(game) {
 }
 
 const mouseClickTypeMap = {
-    'tank': placeTank,
+    'defTank': placeTank,
     'solider': placeSolider,
 }
 
@@ -29,5 +30,8 @@ function placeSolider(mousePos) {
     })
 }
 function placeTank(mousePos) {
-
+    tanker({
+        x: mousePos.x,
+        y: mousePos.y,
+    });
 }
