@@ -1,28 +1,7 @@
 import { get, sortedIndexBy, findIndex} from 'lodash';
 
 import { generateMap } from './mst';
-
-const debugfile = `
- __________________________________________________________________
- |         ___________            |   __________________________   |
- |  Mouse |   _____   |  |  |  |  |  |   ____________________   |  |
- |________|  |     |_____|  |  |_____|  |   _________________   |  |
- |___________|  |___________|  |   _____|  |   ___________   |  |  |
- |   ___________|   ___________|  |  ______|  |   ________|  |_____|
- |  |   ___________|   ___________|___________|  |___________|     |
- |  |  |   __         |   _________________   |_____   |     |  |  |
- |  |  |  |  |  |  |  |  |   ______________|_____   |  |  |  |  |  |
- |  |  |  |  |  |  |_____|  |   _____   |   __   |  |  |  |  |  |  |
- |  |  |  |  |  |___________|  |     |  |  |  |  |  |  |  |  |  |  |
- |  |  |  |  |_________________|  |  |  |  |  |  |  |  |  |  |  |  |
- |  |  |  |  |   _________________|_____|  |  |  |  |  |  |  |  |  |
- |  |  |  |  |  |   __    ______________|  |  |  |  |   __|  |  |  |
- |  |  |  |  |  |  |  |  |   ________   |  |  |  |  |  |  |  |  |  |
- |  |  |  |  |  |  |  |  |  |   _____   |  |  |  |  |  | ____|  |  |
- |  |  |  |  |  |  |  |  |  |  |  ______|  |  |  |  |   ________|  |
- |  |  |_____|  |  |  |  |  |  |_____   |  |  |  |  |  |           |
- |  |_____   |  |__|  |  |  |________|  |  |  |  |__|  |  Cheese   |
- |___________|_______________________|________|________|___________|`;
+import { fullCircle } from './utils';
 
 function getPathWeight(c) {
     if (c === ' ') return 1;
@@ -157,19 +136,30 @@ function getMap() {
     return core.origMap.map;
 }
 
+function cirSearch(x, y, r, search) {
+    const { w, h } = getMap();
+    fullCircle(x, y, r, (x, y) => {
+        if (x < 0) return;
+        if (y < 0) return;
+        if (x >= w) return;
+        if (y >= h) return;
+        return search(x, y, getMapAt({x,y}));
+    })
+}
+
 const debugEdges = generateMap(20, 20, { x: 1, y: 1 });
 const core = {
     MAXWEIGHT,
     findPath,
     getWaypointsFromPath,
     parseFile,
-    debugEdges,
     origMap: parseFile(debugEdges),
     processRoute,
     initSearchStart,
     getMap,
     getMapAt,
     getMapByObj: obj => get(getMap(), [obj.y, obj.x]),
+    cirSearch,
     curSearch: null,
 };
 

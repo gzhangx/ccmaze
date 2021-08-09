@@ -138,9 +138,11 @@ function runLoop(thisRender) {
     }
 
 
-    fullCircle(20, 10, 8, (x, y) => {
-        drect({ x, y }, { actualSize: 10, fillStyle: '#ffffff' });
-    });
+    if (mouseObj) {
+        core.cirSearch(mouseObj.x, mouseObj.y, 20, (x, y) => {
+            drect({ x, y }, { actualSize: 10, fillStyle: '#ffffff' });
+        })
+    }
 }
 
 
