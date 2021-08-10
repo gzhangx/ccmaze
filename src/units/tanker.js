@@ -10,6 +10,7 @@ export default function tanker({ x, y, owner, life = 100 }) {
     game.addMapObject(obj);    
     obj.processingObj = () => {
         if (obj.life <= 0) {
+            obj.isDead = true;
             game.removeMapObject(obj);
             cell.mapObjs = cell.mapObjs.filter(x => x !== obj);
         }
