@@ -55,7 +55,6 @@ function createMapObj(prm) {
                 moveInfo.curTime = 0;                
                 moveInfo.leftOverTime = curTime - moveInfo.endTime;
                 moveInfo.endTime = 0;
-                console.log(`loeftover time=${moveInfo.leftOverTime}`)
                 obj.calculateMoveInfo();
             } else {
                 const tdiff = (curTime - moveInfo.curTime) / 1000.0;

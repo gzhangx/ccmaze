@@ -5,7 +5,7 @@ import { last } from 'lodash';
 export default function mover({ x, y, owner }) {
     //const obj = { id: game.getNextItemId(), x, y, moveTo: [], speed: 1, curMoveTime: 0, hasPath: false, };
     //game.addMapObject(obj);
-    const obj = game.createMapObj({ x, y, objType: 'mover', owner, speed: 1})
+    const obj = game.createMapObj({ x, y, objType: 'mover', owner, speed: 2})
     obj.processingObj = () => {
         if (!obj.target || obj.target.isDead) {
             obj.target = null;
@@ -50,7 +50,7 @@ export default function mover({ x, y, owner }) {
             }            
         }
         
-        if (mto && obj.moveTo.length === 0) {
+        if (obj.target && obj.moveInfo.moveTo.length === 0) {
             game.removeMapObject(obj);
             if (obj.target) {
                 obj.target.life -= 10;
