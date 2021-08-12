@@ -17,10 +17,50 @@ const addMapObject = s => {
 }
 
 function createMapObj(prm) {
-    const { x, y, } = prm;    //owner, objType, life
+    const { x, y, speed = 0} = prm;    //owner, objType, life
     const anchorCell = core.getMapAt({ x, y });
     if (!anchorCell) return;
-    const obj = { id: getNextItemId(), anchorCell, ...prm };
+    const obj = {
+        id: getNextItemId(), anchorCell,
+        moveInfo: { display: { x, y }, moveD: { x: 0, y: 0 }, target:null, inMove: false, curTime: 0, endTime: 0, moveTo: [] },
+        ...prm
+    };
+    obj.calculateMoveInfo = () => {
+        const moveInfo = obj.moveInfo;
+        const curTime = new Date().getTime();
+        const dspXy = moveInfo.display;
+        const target = moveInfo.target;
+        const moveD = moveInfo.moveD;
+        if (!target) {
+            const toPos = moveInfo.moveTo.pop();
+            if (!toPos) return;
+            moveD.x = (toPos.x - dspXy.x) * speed;
+            moveD.y = (toPos.y - dspXy.y) * speed;
+            const maxMove = moveD[Math.abs(moveD.x) > Math.abs(moveD.y) ? 'x' : 'y'];
+            if (maxMove === 0) {
+                moveInfo.target = null;
+            } else {
+                moveInfo.target = toPos;
+                moveInfo.curTime = curTime;
+                moveInfo.endTime = curTime + (1000 / Math.abs(maxMove));
+            }
+        } else {
+            if (curTime >= moveInfo.endTime) {
+                dspXy.x = target.x;
+                dspXy.y = target.y;
+                obj.x = target.x;
+                obj.y = target.y;
+                moveInfo.target = null;
+                moveInfo.curTime = 0;
+                moveInfo.endTime = 0;
+                //obj.calculateMoveInfo();
+            } else {
+                const tdiff = (curTime - moveInfo.curTime) / 1000.0;
+                dspXy.x = obj.x + tdiff * moveD.x;
+                dspXy.y = obj.y + tdiff * moveD.y;
+            }
+        }    
+    };
     //if (!anchorCell.mapObjs) anchorCell.mapObjs = [];
     //anchorCell.mapObjs.push(obj);
     addObjToCell(anchorCell, obj);

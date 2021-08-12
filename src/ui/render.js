@@ -133,8 +133,13 @@ function runLoop(thisRender) {
         //    console.log(`process obj ${s.x} ${s.y} ${s.name}`)
         if (s.objType === 'tanker') {
             drect(s, { actualSize: 15, fillStyle: '#ff00ff', text: 's' });
-        }else
-        drect(s, { actualSize: 4, fillStyle: '#ff00ff', text: 's' });
+        } else {
+            let d = s;
+            if (s.moveInfo && s.moveInfo.display) {
+                d = s.moveInfo.display;
+            }
+            drect(d, { actualSize: 4, fillStyle: '#ff00ff', text: 's' });
+        }
     });
 
     lastDebugMsgToggle = false;
