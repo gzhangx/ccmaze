@@ -44,8 +44,9 @@ export default function mover({ x, y, owner }) {
                 obj.moveTo.pop();
                 const toaddr = last(obj.moveTo);
                 if (toaddr) {
-                    obj.x = toaddr.x;
-                    obj.y = toaddr.y;
+                    //obj.x = toaddr.x;
+                    //obj.y = toaddr.y;
+                    game.moveMapObject(obj, toaddr);
                 }
             }            
         }

@@ -18,14 +18,39 @@ const addMapObject = s => {
 
 function createMapObj(prm) {
     const { x, y, } = prm;    //owner, objType, life
-    const cell = core.getMapAt({ x, y });
-    if (!cell) return;
-    const obj = { id: getNextItemId(), cell, ...prm };
-    if (!cell.mapObjs) cell.mapObjs = [];
-    cell.mapObjs.push(obj);
+    const anchorCell = core.getMapAt({ x, y });
+    if (!anchorCell) return;
+    const obj = { id: getNextItemId(), anchorCell, ...prm };
+    //if (!anchorCell.mapObjs) anchorCell.mapObjs = [];
+    //anchorCell.mapObjs.push(obj);
+    addObjToCell(anchorCell, obj);
     addMapObject(obj);
     return obj;
 }
+
+function addObjToCell(cell, obj) {
+    if (!cell.mapObjs) cell.mapObjs = [];
+    cell.mapObjs.push(obj);
+}
+
+function removeObjFromAnchorCell(obj) {
+    const anchorCell = obj.anchorCell;
+    if (anchorCell)
+        anchorCell.mapObjs = anchorCell.mapObjs.filter(x => x !== obj);
+}
+
+function moveMapObject(obj, toPos) {
+    const newCell = core.getMapAt(toPos);
+    if (!newCell) {
+        console.log(`bad mov3 loc ${toPos.x} ${toPos.y}`)
+        return;
+    }
+    obj.x = toPos.x;
+    obj.y = toPos.y;
+    removeObjFromAnchorCell(obj);
+    addObjToCell(newCell, obj);
+}
+
 let curItemId = 0;
 const gameCore = {
     data,
@@ -35,12 +60,14 @@ const gameCore = {
         mousePos: { x: 0, y: 0 },
         mouseClickType: null,
     },
-    addMapObject,
+    //addMapObject,
     removeMapObject: s => {
         remove(data.mapObjects, { id: s.id });
+        removeObjFromAnchorCell(s);
     },
     createMapObj,
-    doWork,    
+    moveMapObject,
+    //doWork,    
     start: () => {
         if (started) return;
         started = true;
@@ -50,7 +77,7 @@ const gameCore = {
 
 function run() {
     setTimeout(run, RUNINT);
-    gameCore.doWork(gameCore);
+    doWork(gameCore);
 }
 
 export default gameCore;

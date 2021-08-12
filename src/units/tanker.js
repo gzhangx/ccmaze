@@ -13,7 +13,7 @@ export default function tanker({ x, y, owner, life = 100 }) {
         if (obj.life <= 0) {
             obj.isDead = true;
             game.removeMapObject(obj);
-            obj.cell.mapObjs = obj.cell.mapObjs.filter(x => x !== obj);
+            obj.anchorCell.mapObjs = obj.anchorCell.mapObjs.filter(x => x !== obj);
         }
     };
     return obj;
