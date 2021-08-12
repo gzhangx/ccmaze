@@ -22,7 +22,7 @@ function createMapObj(prm) {
     if (!anchorCell) return;
     const obj = {
         id: getNextItemId(), anchorCell,
-        moveInfo: { display: { x, y }, moveD: { x: 0, y: 0 }, target:null, inMove: false, curTime: 0, endTime: 0, moveTo: [] },
+        moveInfo: { display: { x, y }, moveD: { x: 0, y: 0 }, target:null, inMove: false, curTime: 0, endTime: 0, moveTo: [], leftOverTime: 0 },
         ...prm
     };
     obj.calculateMoveInfo = () => {
@@ -41,8 +41,9 @@ function createMapObj(prm) {
                 moveInfo.target = null;
             } else {
                 moveInfo.target = toPos;
-                moveInfo.curTime = curTime;
-                moveInfo.endTime = curTime + (1000 / Math.abs(maxMove));
+                moveInfo.curTime = curTime - moveInfo.leftOverTime;
+                moveInfo.leftOverTime = 0;
+                moveInfo.endTime = moveInfo.curTime + (1000.0 / Math.abs(maxMove));
             }
         } else {
             if (curTime >= moveInfo.endTime) {
@@ -51,9 +52,11 @@ function createMapObj(prm) {
                 obj.x = target.x;
                 obj.y = target.y;
                 moveInfo.target = null;
-                moveInfo.curTime = 0;
+                moveInfo.curTime = 0;                
+                moveInfo.leftOverTime = curTime - moveInfo.endTime;
                 moveInfo.endTime = 0;
-                //obj.calculateMoveInfo();
+                console.log(`loeftover time=${moveInfo.leftOverTime}`)
+                obj.calculateMoveInfo();
             } else {
                 const tdiff = (curTime - moveInfo.curTime) / 1000.0;
                 dspXy.x = obj.x + tdiff * moveD.x;
