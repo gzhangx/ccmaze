@@ -29,14 +29,17 @@ function runLoop(thisRender) {
         const { actualSize, fillStyle, text } = opt;
         c.fillStyle = fillStyle || "#000000" ;
         if (!actualSize) {            
-            c.fillRect(x - BLKSH, y - BLKSH, BLKSIZE, BLKSIZE);
+            //c.fillRect(x - BLKSH, y - BLKSH, BLKSIZE, BLKSIZE);
+            c.fillRect(x , y , BLKSIZE, BLKSIZE);
             c.beginPath();
-            c.moveTo(x - BLKSH + CPAD, y - BLKSH + CPAD);
-            c.lineTo(x + BLKSH - CPAD, y + BLKSH - CPAD);
+            c.moveTo(x + CPAD, y + CPAD);
+            c.lineTo(x + BLKSIZE - CPAD, y + BLKSIZE - CPAD);
+            //c.moveTo(x - BLKSH + CPAD, y - BLKSH + CPAD);
+            //c.lineTo(x + BLKSH - CPAD, y + BLKSH - CPAD);
             c.stroke();
         } else {            
-            const hf = actualSize / 2;
-            c.fillRect(x - hf, y - hf, actualSize, actualSize);            
+            const hf = actualSize / 2 - BLKSH;
+            c.fillRect(x - hf, y - hf, actualSize, actualSize);
         }
         if (text) {
             //c.fillText(text, x, y);
@@ -53,7 +56,7 @@ function runLoop(thisRender) {
         uiInfo.debugStart = false;
         showDebugStats = true;
         uiInfo.searchOpt = core.findPath({
-            x: 3, y: 4,
+            x: 2, y: 2,
             checkCur: (opt, c) => {
                 if (opt.processCount > 1000) return 2;
                 return 0;

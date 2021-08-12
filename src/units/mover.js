@@ -2,9 +2,10 @@ import core from '../engine/core';
 import game from '../engine/game';
 import { last } from 'lodash';
 
-export default function mover({ x, y, name }) {
-    const obj = { id: game.getNextItemId(), x, y, moveTo: [], speed: 1, curMoveTime: 0, name, hasPath: false, };
-    game.addMapObject(obj);
+export default function mover({ x, y, owner }) {
+    //const obj = { id: game.getNextItemId(), x, y, moveTo: [], speed: 1, curMoveTime: 0, hasPath: false, };
+    //game.addMapObject(obj);
+    const obj = game.createMapObj({ x, y, objType: 'mover', owner, speed: 1, curMoveTime:0, moveTo:[]})
     obj.processingObj = () => {
         if (!obj.target || obj.target.isDead) {
             obj.target = null;
