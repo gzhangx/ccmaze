@@ -1,6 +1,8 @@
 import { remove } from 'lodash';
 import { doWork } from './work';
 import core from './core';
+import { fullCircle } from './utils';
+
 const RUNINT = 100;
 let started = false;
 
@@ -93,17 +95,26 @@ function moveMapObject(obj, toPos) {
     addObjToCell(newCell, obj);
 }
 
+function loopCellMapObjs(c, finder, opt) {
+    const mapObjs = c.mapObjs;
+    if (mapObjs) {
+        for (let i = 0; i < mapObjs.length; i++) {
+            const found = finder(mapObjs[i], c, opt);
+            if (found) {
+                return found;
+            }
+        }
+    }
+}
 function setObjMapTarget(obj, finder) {
     let found = null;
     const res = core.findPath({
         x: obj.x, y: obj.y,
         checkCur: (c, opt) => {
-            if (c.mapObjs) {
-                found = finder(c, opt);                
-                if (found) {
-                    obj.target = found;
-                    return 1;
-                }
+            found = loopCellMapObjs(c, finder, opt);            
+            if (found) {            
+                obj.target = found;
+                return 1;
             }
             return 0;
         }
@@ -112,6 +123,20 @@ function setObjMapTarget(obj, finder) {
         obj.moveInfo.moveTo = res.getWaypointsFromPath(found);
     }
     return found;
+}
+
+function searchNearByTargets(obj, r, finder) {
+    let foundRet = null;
+    fullCircle(obj.x, obj.y, r, (x, y) => {
+        const c = core.getMapAt({ x, y });
+        const found = loopCellMapObjs(c, finder);
+        if (found) {
+            obj.target = found;
+            foundRet = found;
+            return 1;
+        }
+    });
+    return foundRet;
 }
 
 let curItemId = 0;
@@ -131,6 +156,7 @@ const gameCore = {
     createMapObj,
     moveMapObject,
     setObjMapTarget,
+    searchNearByTargets,
     //doWork,    
     start: () => {
         if (started) return;

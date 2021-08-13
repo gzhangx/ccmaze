@@ -133,6 +133,12 @@ function runLoop(thisRender) {
         //    console.log(`process obj ${s.x} ${s.y} ${s.name}`)
         if (s.objType === 'tanker') {
             drect(s, { actualSize: 15, fillStyle: '#ff00ff', text: 's' });
+            if (s.target) {
+                c.beginPath();
+                c.moveTo(s.x * BLKSIZE, s.y * BLKSIZE);
+                c.lineTo(s.target.x * BLKSIZE, s.target.y * BLKSIZE);
+                c.stroke();
+            }
         } else {
             let d = s;
             if (s.moveInfo && s.moveInfo.display) {
@@ -150,7 +156,7 @@ function runLoop(thisRender) {
 
 
     if (mouseObj) {
-        core.cirSearch(mouseObj.x, mouseObj.y, 20, (x, y) => {
+        core.cirSearch(mouseObj.x, mouseObj.y, 1, (x, y) => {
             //drect({ x, y }, { actualSize: 10, fillStyle: '#ffffff' });
         })
     }

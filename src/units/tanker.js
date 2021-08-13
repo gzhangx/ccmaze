@@ -14,6 +14,13 @@ export default function tanker({ x, y, owner, life = 100 }) {
             obj.isDead = true;
             game.removeMapObject(obj);
             //obj.anchorCell.mapObjs = obj.anchorCell.mapObjs.filter(x => x !== obj);
+        } else if (!obj.target || obj.target.isDead){
+            const found = game.searchNearByTargets(obj, 5, itm => {
+                if (itm.objType === 'mover') {
+                    return itm;
+                }
+            });
+            obj.target = found;
         }
     };
     return obj;

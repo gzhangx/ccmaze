@@ -10,8 +10,9 @@ export default function mover({ x, y, owner }) {
         if (!obj.target || obj.target.isDead) {
             obj.target = null;
             game.setObjMapTarget(obj, c => {
-                const tnk = c.mapObjs.filter(o => o.objType === 'tanker');
-                if (tnk.length) return tnk[0];                    
+                if (c.objType === 'tanker') {
+                    return c;
+                }
             });            
         }
 
@@ -37,6 +38,7 @@ export default function mover({ x, y, owner }) {
         }
         
         if (obj.target && obj.moveInfo.moveTo.length === 0) {
+            obj.isDead = true;
             game.removeMapObject(obj);
             if (obj.target) {
                 obj.target.life -= 10;
