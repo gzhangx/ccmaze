@@ -9,24 +9,10 @@ export default function mover({ x, y, owner }) {
     obj.processingObj = () => {
         if (!obj.target || obj.target.isDead) {
             obj.target = null;
-            let found = null;
-            const res = core.findPath({
-                x: obj.x, y: obj.y,
-                checkCur: (c, optt) => {
-                    if (c.mapObjs) {
-                        const tnk = c.mapObjs.filter(o => o.objType === 'tanker');
-                        if (tnk.length) {
-                            found = c;
-                            obj.target = tnk[0];
-                            return 1;
-                        }
-                    }
-                    return 0;
-                }
-            });
-            if (found) {
-                obj.moveInfo.moveTo = res.getWaypointsFromPath(found);                
-            }
+            game.setObjMapTarget(obj, c => {
+                const tnk = c.mapObjs.filter(o => o.objType === 'tanker');
+                if (tnk.length) return tnk[0];                    
+            });            
         }
 
         obj.calculateMoveInfo();

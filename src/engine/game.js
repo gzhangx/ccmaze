@@ -93,10 +93,31 @@ function moveMapObject(obj, toPos) {
     addObjToCell(newCell, obj);
 }
 
+function setObjMapTarget(obj, finder) {
+    let found = null;
+    const res = core.findPath({
+        x: obj.x, y: obj.y,
+        checkCur: (c, opt) => {
+            if (c.mapObjs) {
+                found = finder(c, opt);                
+                if (found) {
+                    obj.target = found;
+                    return 1;
+                }
+            }
+            return 0;
+        }
+    });
+    if (found) {
+        obj.moveInfo.moveTo = res.getWaypointsFromPath(found);
+    }
+    return found;
+}
+
 let curItemId = 0;
 const gameCore = {
     data,
-    curItemId,
+    //curItemId,
     getNextItemId,
     inputInfo: {
         mousePos: { x: 0, y: 0 },
@@ -109,6 +130,7 @@ const gameCore = {
     },
     createMapObj,
     moveMapObject,
+    setObjMapTarget,
     //doWork,    
     start: () => {
         if (started) return;
