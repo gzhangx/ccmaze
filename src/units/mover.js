@@ -15,27 +15,12 @@ export default function mover({ x, y, owner }) {
                 }
             });            
         }
+        if (obj.x != obj.oldx || obj.y != obj.oldy) {            
+            obj.oldx = obj.x;
+            obj.oldy = obj.y;
+        }
 
         obj.calculateMoveInfo();
-        const mto = null; //last(obj.moveTo);
-        if (mto) {
-            const speed = obj.speed;
-            const dx = mto.x - obj.x;
-            const dy = mto.y - obj.y;
-            obj.curMoveTime++;
-            const xtime = Math.abs(dx * 1.0 / speed);
-            const ytime = Math.abs(dy * 1.0 / speed);
-            if (obj.curMoveTime > xtime && obj.curMoveTime > ytime) {
-                obj.curMoveTime -= xtime + ytime;
-                obj.moveTo.pop();
-                const toaddr = last(obj.moveTo);
-                if (toaddr) {
-                    //obj.x = toaddr.x;
-                    //obj.y = toaddr.y;
-                    game.moveMapObject(obj, toaddr);
-                }
-            }            
-        }
         
         if (obj.target && obj.moveInfo.moveTo.length === 0) {
             obj.isDead = true;

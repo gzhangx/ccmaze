@@ -27,6 +27,7 @@ function createMapObj(prm) {
         moveInfo: { display: { x, y }, moveD: { x: 0, y: 0 }, target:null, inMove: false, curTime: 0, endTime: 0, moveTo: [], leftOverTime: 0 },
         ...prm
     };
+    obj.getAnchorCell = () => obj.anchorCell;
     obj.calculateMoveInfo = () => {
         const moveInfo = obj.moveInfo;
         const curTime = new Date().getTime();
@@ -50,9 +51,8 @@ function createMapObj(prm) {
         } else {
             if (curTime >= moveInfo.endTime) {
                 dspXy.x = target.x;
-                dspXy.y = target.y;
-                obj.x = target.x;
-                obj.y = target.y;
+                dspXy.y = target.y;                
+                moveMapObject(obj, target);
                 moveInfo.target = null;
                 moveInfo.curTime = 0;                
                 moveInfo.leftOverTime = curTime - moveInfo.endTime;
@@ -75,6 +75,7 @@ function createMapObj(prm) {
 function addObjToCell(cell, obj) {
     if (!cell.mapObjs) cell.mapObjs = [];
     cell.mapObjs.push(obj);
+    obj.anchorCell = cell;
 }
 
 function removeObjFromAnchorCell(obj) {
@@ -92,7 +93,7 @@ function moveMapObject(obj, toPos) {
     obj.x = toPos.x;
     obj.y = toPos.y;
     removeObjFromAnchorCell(obj);
-    addObjToCell(newCell, obj);
+    addObjToCell(newCell, obj);    
 }
 
 function loopCellMapObjs(c, finder, opt) {
