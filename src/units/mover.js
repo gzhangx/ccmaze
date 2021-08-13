@@ -15,10 +15,6 @@ export default function mover({ x, y, owner }) {
                 }
             });            
         }
-        if (obj.x != obj.oldx || obj.y != obj.oldy) {            
-            obj.oldx = obj.x;
-            obj.oldy = obj.y;
-        }
 
         obj.calculateMoveInfo();
         
