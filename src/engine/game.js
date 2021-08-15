@@ -130,6 +130,7 @@ function searchNearByTargets(obj, r, finder) {
     let foundRet = null;
     fullCircle(obj.x, obj.y, r, (x, y) => {
         const c = core.getMapAt({ x, y });
+        if (!c) return;
         const found = loopCellMapObjs(c, finder);
         if (found) {
             obj.target = found;

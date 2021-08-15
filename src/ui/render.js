@@ -37,9 +37,28 @@ function runLoop(thisRender) {
             //c.moveTo(x - BLKSH + CPAD, y - BLKSH + CPAD);
             //c.lineTo(x + BLKSH - CPAD, y + BLKSH - CPAD);
             c.stroke();
-        } else {            
-            const hf = actualSize / 2 - BLKSH;
-            c.fillRect(x - hf, y - hf, actualSize, actualSize);
+        } else {
+            const sz2 = actualSize / 2;
+            if (ml.objType === 'tanker') {
+                const cx = x + BLKSH;
+                const cy = y + BLKSH;
+                c.strokeStyle = "#FFFFFF";
+                c.save();
+                
+                if (ml.facingInfo) {
+                    c.translate(cx, cy);
+                    c.rotate(ml.facingInfo.curAngle);
+                }
+                c.fillRect(- sz2, - sz2, actualSize, actualSize);
+                c.beginPath();                
+                c.moveTo(0,0);
+                c.lineTo(sz2, 0);
+                c.stroke();                
+                c.restore();
+            } else {
+                const hf = actualSize / 2 - BLKSH;
+                c.fillRect(x - hf, y - hf, actualSize, actualSize);
+            }
         }
         if (text) {
             //c.fillText(text, x, y);
@@ -134,10 +153,10 @@ function runLoop(thisRender) {
         if (s.objType === 'tanker') {
             drect(s, { actualSize: 15, fillStyle: '#ff00ff', text: 's' });
             if (s.target) {
-                c.beginPath();
-                c.moveTo(s.x * BLKSIZE, s.y * BLKSIZE);
-                c.lineTo(s.target.x * BLKSIZE, s.target.y * BLKSIZE);
-                c.stroke();
+                //c.beginPath();
+                //c.moveTo(s.x * BLKSIZE, s.y * BLKSIZE);
+                //c.lineTo(s.target.x * BLKSIZE, s.target.y * BLKSIZE);
+                //c.stroke();
             }
         } else {
             let d = s;
