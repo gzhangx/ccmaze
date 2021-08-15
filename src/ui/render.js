@@ -179,6 +179,16 @@ function runLoop(thisRender) {
             //drect({ x, y }, { actualSize: 10, fillStyle: '#ffffff' });
         })
     }
+
+    game.data.renderObjs.forEach(blt => {
+        if (blt.cur < blt.maxSteps) {
+            blt.cur++;
+            const x = blt.from.x + (blt.dx * blt.cur);
+            const y = blt.from.y + (blt.dy * blt.cur);
+            drect({x,y}, { actualSize: 2, fillStyle: '#ffbbff'});
+       }
+    });
+    game.data.renderObjs = game.data.renderObjs.filter(x => x.cur < x.maxSteps);
 }
 
 

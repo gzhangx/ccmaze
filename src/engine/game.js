@@ -9,6 +9,8 @@ let started = false;
 const data = {
     mapObjects: [],
     mapObjectKeys: {},
+
+    renderObjs: [],
 };
 
 const getNextItemId = () => ++curItemId;
