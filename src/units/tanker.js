@@ -42,6 +42,7 @@ export default function tanker({ x, y, w = TANKERSIZE, h = TANKERSIZE, owner, li
             } else {
                 const laps = curTime - obj.firingInfo.lastFireTime;
                 if (laps >= obj.firingInfo.loadTime) {
+                    obj.target.life -= 10;
                     obj.firingInfo.lastFireTime = curTime;
                     const dx = obj.target.x - obj.x;
                     const dy = obj.target.y - obj.y;
