@@ -50,6 +50,7 @@ export default function tanker({ x, y, w = TANKERSIZE, h = TANKERSIZE, owner, li
                     if (Math.abs(dy) > Math.abs(dx)) {
                         dd = dy;
                     }
+                    dd = Math.abs(dd);
                     if (dd !== 0) {
                         game.data.renderObjs.push({
                             renderType: 'bullet',
